@@ -8,9 +8,11 @@ chmod +x /tmp/calicoctl
 3. run calico libnetwork plugin
 /tmp/calicoctl node --libnetwork
 
-4. create network net1
-docker network create --driver=calico --ipam-driver calico net1
-
-5. clone demo project
+4. clone demo project
 cd /tmp
 git clone https://github.com/allanhung/docker-load-balancer.git
+
+5. run demo
+cd /tmp/docker-load-balancer
+./run.sh
+
