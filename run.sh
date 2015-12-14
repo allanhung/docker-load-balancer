@@ -7,7 +7,6 @@ cleanup() {
     echo "Cleaning up docker images ..."
     sudo docker rm -f $ID1
     sudo docker rm -f $ID2
-    sudo docker rm -f $ID3
 
     sudo docker rm -f $ID
     exit
@@ -18,14 +17,12 @@ VIRTUAL_IP=$1
 echo "Creating docker images ..."
 
 ID1=$(./nginx/run.sh $VIRTUAL_IP)
-ID2=$(./nginx/run.sh $VIRTUAL_IP)
-ID3=$(./nginx/run.sh $VIRTUAL_IP)
+ID2=$(./nginx/run.sh $VIRTUAL_IP --net net1)
 
 IP1=$(sudo docker inspect -f '{{.NetworkSettings.IPAddress}}' $ID1)
-IP2=$(sudo docker inspect -f '{{.NetworkSettings.IPAddress}}' $ID2)
-IP3=$(sudo docker inspect -f '{{.NetworkSettings.IPAddress}}' $ID3)
+IP2=$(sudo docker inspect -f '{{.NetworkSettings.Networks.nginx.IPAddress}}' $ID2)
 
-ID=$(./ipvs/run.sh "$VIRTUAL_IP" "$IP1 $IP2 $IP3")
+ID=$(./ipvs/run.sh "$VIRTUAL_IP" "$IP1 $IP2")
 IP=$(sudo docker inspect -f '{{.NetworkSettings.IPAddress}}' $ID)
 
 echo "Adding route ..."
@@ -38,4 +35,3 @@ while true
 do
     sleep 1
 done
-

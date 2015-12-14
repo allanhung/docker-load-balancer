@@ -1,0 +1,16 @@
+1. start docker with cluster-store
+--cluster-store=etcd://<ETCD IP>:2379
+
+2. download calicoctl
+wget -O /tmp/calicoctl http://www.projectcalico.org/builds/calicoctl
+chmod +x /tmp/calicoctl
+
+3. run calico libnetwork plugin
+/tmp/calicoctl node --libnetwork
+
+4. create network net1
+docker network create --driver=calico --ipam-driver calico net1
+
+5. clone demo project
+cd /tmp
+git clone https://github.com/allanhung/docker-load-balancer.git
