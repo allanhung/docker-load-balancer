@@ -4,7 +4,7 @@ PID=$(docker inspect -f '{{.State.Pid}}' $ID)
 VNET="vnet${ID:0:8}"
 
 sudo mkdir -p /var/run/netns
-sudo ln -s /proc/$PID/ns/net /var/run/netns/$PID
+sudo ln -sf /proc/$PID/ns/net /var/run/netns/$PID
 
 sudo ip link add $VNET type dummy
 sudo ip link set $VNET netns $PID

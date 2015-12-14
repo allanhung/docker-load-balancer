@@ -12,7 +12,25 @@ chmod +x /tmp/calicoctl
 cd /tmp
 git clone https://github.com/allanhung/docker-load-balancer.git
 
-5. run demo
+5. build image
+# nginx
+cd /tmp/docker-load-balancer/nginx
+docker build -t boynux:nginx .
+# ipvs
+cd /tmp/docker-load-balancer/ipvs
+docker build -t boynux:ipvs .
+
+6. install ipvsadm on docker host
+for centos:
+yum install -y ipvsadm
+for debian, ubuntu
+apt-get install -y ipvsadm
+
+7. run demo
 cd /tmp/docker-load-balancer
-./run.sh
+./run.sh VIP
+ex.  ./run.sh 172.19.0.1
+
+8. curl VIP
+ex. curl 172.19.0.1
 

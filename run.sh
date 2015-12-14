@@ -11,10 +11,15 @@ cleanup() {
     sudo docker rm -f $ID
 
     echo "Cleaning up calico network ..."
-    sudo docker network rm net1
+    sudo docker network rm lvsnet
 
     exit
 }
+
+if [ $# != 1 ]; then
+    echo "usage: $0 vip"
+    exit 1
+fi
 
 VIRTUAL_IP=$1
 
@@ -23,16 +28,16 @@ NETID=$(sudo docker network create --driver=calico --ipam-driver calico lvsnet)
 
 echo "Creating docker images ..."
 ID1=$(./nginx/run.sh $VIRTUAL_IP)
-ID2=$(./nginx/run.sh $VIRTUAL_IP --net lvsnet)
+ID2=$(./nginx/run.sh $VIRTUAL_IP "--net lvsnet")
 
 IP1=$(sudo docker inspect -f '{{.NetworkSettings.IPAddress}}' $ID1)
-IP2=$(sudo docker inspect -f '{{.NetworkSettings.Networks.nginx.IPAddress}}' $ID2)
+IP2=$(sudo docker inspect -f '{{.NetworkSettings.Networks.lvsnet.IPAddress}}' $ID2)
 
-ID=$(./ipvs/run.sh "$VIRTUAL_IP" "$IP1 $IP2")
+ID=$(./ipvs/run.sh $VIRTUAL_IP "$IP1 $IP2")
 IP=$(sudo docker inspect -f '{{.NetworkSettings.IPAddress}}' $ID)
 
 echo "Adding calico net rule ..."
-calicoctl profile $NETID rule add inbound allow from cidr 0.0.0.0/0
+/tmp/calicoctl profile $NETID rule add inbound allow from cidr 0.0.0.0/0
 
 echo "Adding route ..."
 sudo ip route add $VIRTUAL_IP via $IP
