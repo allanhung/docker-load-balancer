@@ -27,10 +27,13 @@ for debian, ubuntu
 apt-get install -y ipvsadm
 
 7. run demo
+# run bridge demo
 cd /tmp/docker-load-balancer
-./run.sh VIP
-ex.  ./run.sh 172.19.0.1
+./run_with_bridge.sh VIP
+ex.  ./run_with_bridge.sh 172.19.0.1
+curl 172.19.0.1
 
-8. curl VIP
-ex. curl 172.19.0.1
-
+#run calico demo
+./run_with_calico.sh VIP
+ex.  ./run_with_calico.sh 172.19.0.1
+curl 172.19.0.1
